@@ -1,10 +1,14 @@
 import { ShoppingCartOutlined, ShoppingOutlined, UserOutlined } from "@ant-design/icons";
 import { Badge, Button, Image } from "antd";
 import Avatar from "antd/es/avatar/avatar";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { CartContext } from "./Context/CartContext";
 
 
 function Header(){
+
+  const {CartItems } = useContext(CartContext)
 
   const isLogin = true;
   return(
@@ -37,8 +41,8 @@ function Header(){
         <Button>Login</Button>
       )
     }
-    <Link>
-    <Badge count={5} style={{marginTop: 8}}>
+    <Link to={"/Carts"}>
+    <Badge count={CartItems.length} style={{marginTop: 8}}>
     <ShoppingCartOutlined style={{fontSize: 35, color: "blue", marginTop: 8}}/>
     </Badge>
     
