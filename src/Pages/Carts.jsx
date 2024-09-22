@@ -1,17 +1,53 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { CartContext } from "../Components/Context/CartContext";
-import { Button } from "antd";
+import { Button, message } from "antd";
+import CheckOutModal from "../Components/CheckOutModal";
+import { auth, db } from "../Components/Utils/firebase";
+import { addDoc, collection } from "firebase/firestore";
 
 
 function Carts (){
 
-    const {UpdateCart, RemoveCart, CartItems } = useContext(CartContext);
+  const {UpdateCart, RemoveCart, CartItems, clearCart } = useContext(CartContext);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+    const ModalOpen = ()=> setIsModalOpen(true);
 
     const totalQuantity = CartItems.reduce((value, item) => value + item.quantity,0);
     const totalPrice = CartItems.reduce((value, item) => value + item.quantity * item.price,0);
 
+    const CheckOut = async (values)=>{
+      const checkObj = {
+        ...values,
+        totalQuantity,
+        totalPrice,
+        Status: "Pending",
+        User: auth.currentUser ? auth.currentUser.uid : "Guest",
+        Items: CartItems.map((data)=>`Item = ${data.title}, Price = ${data.price}, (${data.quantity})`),
+   } 
+
+
+
+   const DocRef = collection(db, "Orders");
+  addDoc(DocRef,checkObj).then(()=>
+  message.success("Your Order Is Placed"));
+
+  const encodedTxt = encodeURIComponent(JSON.stringify(checkObj));
+  console.log("values=>", encodeURIComponent(JSON.stringify(checkObj)));
+  window.open(`https://wa.me/923454092081?text=${encodedTxt}`);
+  clearCart();
+  setIsModalOpen(false)
+  }
+
+
     return(
         <div className="container mx-auto ">
+
+          <CheckOutModal
+          isModalOpen={isModalOpen}
+          handleOk={()=> setIsModalOpen(false)}
+          handleCancel={()=> setIsModalOpen(false)}
+          CheckOutOrder={CheckOut}
+          />
           <div className="flex gap-4 my-4">
         <div className="flex-grow border border-red-400 rounded flex justify-center items-center p-5">
           <h1 className="text-2xl font-semibold">{totalQuantity}</h1>
@@ -19,7 +55,7 @@ function Carts (){
         <div className="flex-grow border border-red-400 rounded flex justify-center items-center p-5">
           <h1 className="text-2xl font-semibold">{Math.floor(totalPrice)}</h1>
         </div>
-        <div className="flex-grow border border-red-400 rounded flex justify-center items-center p-5">
+        <div onClick={ModalOpen} className="flex-grow border border-red-400 rounded flex justify-center items-center p-5 cursor-pointer">
           Proceed to Checkout
         </div>
         </div>

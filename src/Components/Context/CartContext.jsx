@@ -62,6 +62,10 @@ function RemoveCart(id){
     setCartItems([...arr]);
 };
 
+function clearCart(id) {
+    setCartItems([]);
+  }
+
 function isItemAdded(id){
     const arr= [...CartItems]
     const ItemIndex = arr.findIndex((data)=> data.id == id);
@@ -76,7 +80,7 @@ function isItemAdded(id){
 };
     return(
         <CartContext.Provider
-        value={{CartItems, AddToCart, UpdateCart, RemoveCart, isItemAdded}}>
+        value={{CartItems, AddToCart, UpdateCart, RemoveCart, isItemAdded, clearCart}}>
             {children}
         </CartContext.Provider>
 
