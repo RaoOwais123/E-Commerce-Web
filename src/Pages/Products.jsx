@@ -35,8 +35,7 @@ function Products(){
 
     return(
         <div className="container mx-auto">
-            <div className=" flex justify-between my-10 gap-2">
-                <Input type="search" placeholder="Search"/>
+            <div className=" flex justify-around my-10 gap-2">
                 <Select
                 showSearch
                 className="h-12 w-1/2"
@@ -49,7 +48,7 @@ function Products(){
                     return {label: data.name, value: data.slug};
                 })}
                 />
-                <Button icon={<SearchOutlined/>} className="h-12">Search</Button>
+                <Button icon={<SearchOutlined/>} className="h-12 w-40">Search</Button>
 
             </div>
 

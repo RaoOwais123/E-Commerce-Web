@@ -4,13 +4,23 @@ import Avatar from "antd/es/avatar/avatar";
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { CartContext } from "./Context/CartContext";
+import { signOut } from "firebase/auth";
+import { auth } from "./Utils/firebase";
+import { AuthContext } from "./Context/AuthContext";
 
 
 function Header(){
 
-  const {CartItems } = useContext(CartContext)
+  const {CartItems } = useContext(CartContext);
+  const {user, setUser} = useContext(AuthContext);
 
-  const isLogin = true;
+
+
+  const handleUserLogout = async ()=>{
+    await signOut(auth);
+ }
+
+  
   return(
     <header className="text-gray-600 body-font">
   <div className="container mx-auto flex flex-wrap p-3 flex-col md:flex-row items-center border-b-4 border-dashed border-red-600">
@@ -35,11 +45,14 @@ function Header(){
     </nav>
     <div className="flex items-center gap-3">
     {
-      isLogin ?(
-        <Avatar size={50} icon={<UserOutlined />}/>
-      ):(
-        <Button>Login</Button>
+      user?.isLogin &&(
+        <div className="flex justify-center items-center gap-4">
+          <Avatar size={50} src={user?.userInfo.photoUrl} />
+
+          <Button onClick={handleUserLogout}>Logout </Button>
+        </div>
       )
+      
     }
     <Link to={"/Carts"}>
     <Badge count={CartItems.length} style={{marginTop: 8}}>
